@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from 'src/app/shared/user.service';
 
@@ -8,10 +9,17 @@ import { UserService } from 'src/app/shared/user.service';
   styleUrls: ['./registration.component.css'],
 })
 export class RegistrationComponent implements OnInit {
-  constructor(public service: UserService,
-    private toastr: ToastrService) {}
+  constructor(
+    public service: UserService,
+    private toastr: ToastrService,
+    private router: Router
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (localStorage.getItem('token') != null) {
+      this.router.navigateByUrl('/home');
+    }
+  }
 
   onSubmit() {
     this.service.register().subscribe(
@@ -24,7 +32,10 @@ export class RegistrationComponent implements OnInit {
             switch (element.code) {
               case 'DuplicateUserName':
                 //Username is already taken
-                this.toastr.error('Username is already taken!', 'Registration failed');
+                this.toastr.error(
+                  'Username is already taken!',
+                  'Registration failed'
+                );
                 break;
               default:
                 //Registratiom failed.
